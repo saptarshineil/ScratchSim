@@ -100,6 +100,9 @@ git lfs install
 git clone https://huggingface.co/datasets/saptarshineilsinha/ToyFerrariCarScratchDefectDataset
 ```
 
+## Demo
+
+<video src="video/daytona_clips_full_30_sec_detector_yolo26_demo.mp4" controls width="720"></video>
 
 ## Authors and acknowledgment
 
