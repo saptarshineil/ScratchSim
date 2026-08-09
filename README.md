@@ -1,0 +1,142 @@
+# Synthetic-Surface-Defects
+
+Official implementation of the paper **"ScratchSim: A Procedural Synthetic Data Pipeline for Surface Scratch Detection"** ([arXiv:2607.27065](https://arxiv.org/abs/2607.27065)).
+
+## Abstract
+
+While automated defect detection such as the detection of surface scratches is an important aspect in industrial quality control, the scarcity of annotated defect data makes this task challenging. This paper presents a procedural rendering pipeline that generates large-scale annotated synthetic training data using BlenderProc, with configurable material appearance, camera modes, and domain randomization, producing automatic COCO-format annotations. To show the potential of our approach, we evaluate four training strategies, namely synthetic-only, real-only, mixed, and fine-tuning from synthetic weights, across two objects with different material properties and three lightweight edge-deployable detectors, YOLOX, YOLO26, and LW-DETR. Our evaluation shows that fine-tuning from synthetic weights consistently outperforms real-only training, and that mixed training effectively recovers performance under scarce real-data conditions, with findings validated across both convolutional and transformer-based architectures. The proposed approach enables scalable defect detection without the burden of large real annotated datasets, making it practical for on-device industrial inspection.
+
+## Installation
+
+### 1. Install BlenderProc
+```bash
+pip install blenderproc
+```
+
+### 2. Install pycairo
+#### 2.1 Install dependencies
+```bash
+sudo apt update
+sudo apt install libcairo2-dev pkg-config
+```
+
+#### 2.2 Install Python 3.11 (Debian/Ubuntu)
+Pycairo requires python 3.11 in order to work with BlenderProc 2.8.0 / Blender 4.2.1 LTS.
+
+Add the deadsnakes PPA and install Python 3.11 dev and venv packages:
+```bash
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt update
+sudo apt install python3.11-venv python3.11-dev
+```
+
+#### 2.3 Install pycairo into BlenderProc
+Use BlenderProc's pip wrapper:
+```bash
+blenderproc pip install pycairo
+```
+### 3. Download CC_Textures
+```bash
+blenderproc download cc_textures <output_dir>
+```
+
+### 4. (Optional) Install debugpy for IDE debug support
+```bash
+blenderproc pip install debugpy
+```
+
+## Quickstart
+
+- BlenderProc needs to be installed on your machine (currently running version 2.8.0)
+- You need cctextures from ambientcg. BlenderProc provides a script to download the full library.
+
+To run/debug the script cd into its directory and execute "blenderproc run/debug createScene.py" with the following arguments:
+- -obj \<path to .obj file\> (example: .\Objects\daytona_custom.blend)
+- -runs \<number of picture sets\> (default: 1) 
+- -frames \<number of pictures per set\> (default: 1) 
+- -fits \<True/False\> If set to True makes sure that the camera only accepts poses with a positive y-value relative to the object (To not show the "bottom" of daytona_custom.blend) (default: False)
+- -cc \<path to cctextures directory\> (example: E:\DataGeneration\BlenderProc\resources\cctextures)
+- -res \<wanted resolution fot the pictures\> (default: 620 620)
+
+Example:
+```bash
+blenderproc run createScene_tripod.py --blend_file Objects/daytona_custom.blend --cc_material_path <cc_textures dir> --length 0.3 
+```
+
+To visualize and save a copy of the coco-annotations execute:
+```bash
+blenderproc vis coco -i \<picture number\> -b output -s
+```
+If you want to do this for all pictures inside the output folder execute vis.bat. 
+ATTENTION: This will open an instance of every single annotated picture and also save a copy to the output folder.
+
+## Authors and acknowledgment
+
+### Main collaborators
+
+- Saptarshi Neil Sinha — Project administration and conceptualization
+- Tiago Kleist
+- Richard Hoffmann
+- Julius Kühn
+
+
+### Third-party assets
+
+The blender model being used is a combination of the two following projects:
+- "2022 Ferrari Daytona SP3" (https://skfb.ly/pqXFP) by Ddiaz Design is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+- "Ferrari Daytona SP3 2022 | www.vecarz.com" (https://skfb.ly/p8K7s) by vecarz is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+## License
+This project is licensed under the **MIT License**.
+
+```text
+MIT License
+
+Copyright (c) 2026
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to do so, subject to the
+following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+```
+
+```
+The code is under MIT license but objects used in this project are licensed under the Creative Commons
+Attribution 4.0 International License (CC BY 4.0). Please provide appropriate attribution when using these objects.
+```
+
+## Citation
+
+If you use this repository or our pipeline in your research, please cite our paper:
+
+~~~bibtex
+@misc{kühn2026scratchsimproceduralsyntheticdata,
+      title={ScratchSim: A Procedural Synthetic Data Pipeline for Surface Scratch Detection}, 
+      author={Paul Julius Kühn and Saptarshi Neil Sinha and Tiago Kleist and Richard Hoffmann and Arjan Kuijper and Michael Weinmann},
+      year={2026},
+      eprint={2607.27065},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2607.27065}, 
+}
+~~~
+
+
+
+
+
