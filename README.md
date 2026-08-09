@@ -102,18 +102,17 @@ git clone https://huggingface.co/datasets/saptarshineilsinha/ToyFerrariCarScratc
 
 ## Demo
 
-Qualitative results of a **YOLO26** detector trained on **synthetic + real** data (mixed training), evaluated on the toy Ferrari Daytona SP3:
-
-https://github.com/user-attachments/assets/abcd1234-5678-90ef-ghij-klmnopqrstuv
+Demo of using **YOLO26**
 
 <details>
 <summary>Preview as GIF / local file</summary>
 
-![YOLO26 synthetic + real demo](video/demo_preview.gif)
+![YOLO26 synthetic + real demo](video/daytona_yolo26.gif)
 
 Full resolution: [`video/daytona_clips_full_30_sec_detector_yolo26_demo.mp4`](video/daytona_clips_full_30_sec_detector_yolo26_demo.mp4)
 
 </details>
+
 ## Authors and acknowledgment
 
 ### Main collaborators
