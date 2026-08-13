@@ -17,7 +17,7 @@ rm -rf $OUTPATH
 mkdir -p $OUTPATH/output
 mkdir -p $OUTPATH/masks
 
-WORKSPACE=$PWD
+WORKSPACE=$PWD/SratchSim
 
 ### This is a sample docker script. Please adpat and put data like cctexture in the correct path to get it working 
 ## MAIN
@@ -31,9 +31,10 @@ rootless-docker run --rm \
     -v $OUTPATH/output:/output \
     -v $OUTPATH/masks:/masks \
     <name_of_docker_image> \
-    bash -c "blenderproc run /workspace/synthetic-surface-defects/createScene_tirpod.py \
-               -obj='/workspace/synthetic-surface-defects/Objects/daytona_custom.blend' \
-               -cc='/cctextures' \
-               -runs=$RUNS \
-               -frames=$FRAMES \
+    bash -c "blenderproc run /workspace/createScene.py \
+               --blend_file='/workspace/Objects/daytona.blend' \
+               --cc_material_path='/cctextures' \
+               --runs=$RUNS \
+               --frames=$FRAMES \
+               --length=$LENGTH\
                "

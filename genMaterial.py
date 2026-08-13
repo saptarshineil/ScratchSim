@@ -6,7 +6,6 @@ from PIL import Image, ImageFilter
 
 mask_index = 0
 
-DEBUG = False
 # taken from https://pycairo.readthedocs.io/en/latest/tutorial/pillow.html
 def to_pil(surface: cairo.ImageSurface) -> Image:
     format = surface.get_format()
@@ -25,11 +24,11 @@ def to_pil(surface: cairo.ImageSurface) -> Image:
         else:
             raise NotImplementedError(repr(format))
 
-
 def randomize_scratch_image():
     global mask_index
+    #change to /masks/scratch_image_ for usage with the sample synth_datagen.sh script
     mask_path = (
-        "/masks/scratch_image_"
+        "./masks/scratch_image_"
         + str(mask_index)
         + ".png"
     )
@@ -38,28 +37,15 @@ def randomize_scratch_image():
     width, height = original_size, original_size
     surface = cairo.ImageSurface(cairo.FORMAT_RGB24, width, height)
     ctx = cairo.Context(surface)
-
     ctx.set_source_rgb(0, 0, 0)
     ctx.rectangle(0, 0, width, height)
     ctx.fill()
-
     ctx.set_antialias(cairo.ANTIALIAS_BEST)
     ctx.set_source_rgb(1, 1, 1)
-
     num_scratches = np.random.randint(50, 70)
-    #TODO: remove
-    print("number of scratches:", num_scratches)
-
 
     for scratch_idx in range(num_scratches):
-        """
-        if random.random() <= 0.95:
-            brush_size =  np.random.uniform(1.96, 3.1)
-        else:
-            brush_size = np.random.uniform(5, 7)
-        """
         brush_size =  np.random.uniform(1.96, 7)
-                        
         scratch_sizes = ["small", "medium1", "medium2", "big1", "big2"]
         weights = [ 0.22, 0.25, 0.4, 0.1, 0.03]
         scratch_size = random.choices(scratch_sizes, weights=weights, k=1)[0]
@@ -135,13 +121,6 @@ def randomize_scratch_image():
     return image
 
 def calc_endpoints(scratch_dim, width, height):
-    #TODO: remove
-    """
-    if np.random.random() < 0.99:  
-        angle = np.radians(50) 
-    else: 
-        angle = np.random.uniform(0, 2 * np.pi) 
-    """
     angle = np.random.uniform(0, 2 * np.pi) 
     rotation_matrix = np.array([
         [np.cos(angle), -np.sin(angle)],
@@ -173,7 +152,7 @@ def randomize_material(random_texture):
     shader_node_scratches_image.image = scratch_image
 
     shader_node_multiply_scratches_strength = nodes["scratch_strength"]
-    shader_node_multiply_scratches_strength.inputs[1].default_value = 0.95 #0.09 #0.02 #0.10 #0.05 #0.15 
+    shader_node_multiply_scratches_strength.inputs[1].default_value = 0.95 
     shader_node_mapping_scratches = nodes["scratch_mapping"]
     scratch_scaling = 1
 
@@ -187,7 +166,6 @@ def randomize_material(random_texture):
     roughness_paint = nodes["roughness_paint"]
     roughness_scratch = nodes["roughness_scratch"]
     scratch_saturation = nodes["scratch_saturation"]
-
     roughness_scratch.inputs[1].default_value, scratch_saturation.inputs[1].default_value, shader_node_multiply_scratches_strength.inputs[1].default_value  = randomize_scratch()
 
 
@@ -218,41 +196,21 @@ def randomize_material(random_texture):
     
     def apply_red_default(colour, roughness):
         colour.outputs[0].default_value = random.choice(red_shades_default)
-        #metallic.inputs[1].default_value = 0.123
-        #roughness.inputs[0].default_value = 0.004545
 
-    def apply_red_random(colour, roughness):
+    def apply_red_variation(colour, roughness):
         red = random.choice(red_shades)
         colour.outputs[0].default_value = red
-        #metallic.inputs[1].default_value = 0.123
-        #roughness.inputs[0].default_value = #0.004545 
 
-    def apply_black(colour, metallic, roughness):
-        colour.outputs[0].default_value = (0, 0, 0, 1)
-        #metallic.inputs[1].default_value = 0
-        roughness.inputs[0].default_value = 0
-
-    def apply_silver(colour, metallic, roughness):
-        colour.outputs[0].default_value = (0.4, 0.4, 0.4, 1)
-        #metallic.inputs[1].default_value = 0.5
-        roughness.inputs[0].default_value = 0
-
-    def apply_random(colour, metallic, roughness):
+    def apply_random(colour, roughness):
         colour.outputs[0].default_value = list(np.random.rand(3)) + [1]
-        #metallic.inputs[1].default_value = 0
-        roughness.inputs[0].default_value = 0
+        roughness.outputs[0].default_value = np.random.rand(1)
 
-    switch = {
-        "red": apply_red_random,
-        "black": apply_black,
-        "silver": apply_silver,
-    }
 
     if random_texture:
         apply_random(colour_node, roughness_paint)
     else:
         if random.random() <= 0.4:
-            apply_red_random(colour_node, roughness_paint)
+            apply_red_variation(colour_node, roughness_paint)
         else:
             apply_red_default(colour_node, roughness_paint)
 
